@@ -462,6 +462,11 @@ rt {
   font-size: 72px;
   line-height: 1.2;
 }
+.play-window.is-prompt .slot-inner {
+  font-size: 56px;
+  white-space: nowrap;
+  color: var(--pink);
+}
 .play-window.spinning ruby rt { display: none; }
 .play-window.landed { animation: slot-pop 0.5s ease; }
 

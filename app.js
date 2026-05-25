@@ -82,7 +82,7 @@ function spinSlot(windowEl, pool, seenSet, lastText, btn, onLand, opts) {
   if (opts.disableBtns) opts.disableBtns.forEach(b => b && (b.disabled = true));
   if (btn) btn.disabled = true;
   windowEl.classList.add('spinning');
-  windowEl.classList.remove('landed');
+  windowEl.classList.remove('landed', 'is-prompt');
 
   const duration = opts.duration || 1200;
   const interval = opts.interval || 60;
@@ -134,9 +134,11 @@ function resetPlayState() {
   const firstCell = document.querySelector('.setup-cell[data-cat="' + SETUP_ORDER[0] + '"]');
   firstCell.classList.add('active', 'current');
 
-  setSlotHTML(document.getElementById('connectorSlot'), '「{次|つぎ}へ」を{押|お}してね');
+  const connSlot = document.getElementById('connectorSlot');
+  setSlotHTML(connSlot, '「{次|つぎ}へ」を{押|お}してね');
+  connSlot.classList.add('is-prompt');
   document.getElementById('remainingCount').textContent = String(connectorRemaining);
-  document.getElementById('connectorSlot').classList.remove('landed', 'spinning');
+  connSlot.classList.remove('landed', 'spinning');
   document.querySelector('.punchline-counter').classList.remove('zero');
 
   // ボタン状態リセット

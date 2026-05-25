@@ -27,56 +27,8 @@
 </head>
 <body>
 
-<!-- ===================== 設定モード ===================== -->
-<div id="editorView" class="view">
-  <header class="app-header">
-    <h1 class="app-title kirby-title">
-      <span class="c1">お</span><span class="c2">は</span><span class="c3">な</span><span class="c4">し</span><span class="c1">コ</span><span class="c2">ロ</span><span class="c3">リ</span><span class="c4">ン</span>
-    </h1>
-    <p class="app-subtitle"><ruby>即興<rt>そっきょう</rt></ruby>でお<ruby>話<rt>はなし</rt></ruby>づくりを<ruby>楽<rt>たの</rt></ruby>しもう！</p>
-  </header>
-
-  <div class="editor-single">
-    <section class="panel">
-      <h2><ruby>設定<rt>せってい</rt></ruby></h2>
-
-      <div class="setting-row">
-        <label class="setting-label" for="punchlineCount">オチまでのサイコロ<ruby>回数<rt>かいすう</rt></ruby></label>
-        <div class="setting-control">
-          <button type="button" class="btn btn-tiny" id="btnPunchMinus">−</button>
-          <input type="number" id="punchlineCount" min="1" max="30" value="8">
-          <button type="button" class="btn btn-tiny" id="btnPunchPlus">＋</button>
-          <span class="setting-unit"><ruby>回<rt>かい</rt></ruby></span>
-        </div>
-      </div>
-      <p class="setting-hint"><ruby>接続詞<rt>せつぞくし</rt></ruby>のサイコロを<ruby>何回<rt>なんかい</rt></ruby>ふったら「オチ」とするかを<ruby>決<rt>き</rt></ruby>めます。</p>
-
-      <div class="how-to">
-        <h3>あそびかた</h3>
-        <ol>
-          <li>「いつ」「どこで」「だれが」「なにをした」のサイコロを<ruby>順番<rt>じゅんばん</rt></ruby>にふって，お<ruby>話<rt>はなし</rt></ruby>のはじまりを<ruby>決<rt>き</rt></ruby>めます。</li>
-          <li>「<ruby>次<rt>つぎ</rt></ruby>へ」ボタンで<ruby>接続詞<rt>せつぞくし</rt></ruby>のサイコロをふって，<ruby>物語<rt>ものがたり</rt></ruby>をつないでいきます。</li>
-          <li>「オチまであと〇<ruby>回<rt>かい</rt></ruby>」がゼロになったら，<ruby>自分<rt>じぶん</rt></ruby>でオチを<ruby>考<rt>かんが</rt></ruby>えてお<ruby>話<rt>はなし</rt></ruby>を<ruby>完成<rt>かんせい</rt></ruby>させましょう。</li>
-        </ol>
-      </div>
-
-      <div class="publish-area">
-        <button id="btnPublish" class="btn btn-kirby-red btn-big">URLをはっこう</button>
-        <div id="publishResult" class="publish-result">
-          <label>はっこうURL</label>
-          <div class="url-row">
-            <input id="publishedUrl" type="text" readonly placeholder="「URLをはっこう」を押すとここに出ます">
-            <button id="btnCopy" class="btn btn-kirby-blue">コピー</button>
-            <button id="btnOpen" class="btn btn-kirby-blue">ひらく</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-</div>
-
 <!-- ===================== 本番（プレイ）モード ===================== -->
-<div id="playView" class="view hidden">
+<div id="playView" class="view">
   <header class="play-header">
     <h1 class="play-title kirby-title">
       <span class="c1">お</span><span class="c2">は</span><span class="c3">な</span><span class="c4">し</span><span class="c1">コ</span><span class="c2">ロ</span><span class="c3">リ</span><span class="c4">ン</span>
@@ -134,8 +86,12 @@
         <div id="connectorSlot" class="play-window"><div class="slot-inner">「<ruby>次<rt>つぎ</rt></ruby>へ」を<ruby>押<rt>お</rt></ruby>してね</div></div>
       </div>
 
-      <div class="punchline-counter">
-        オチまであと <span id="remainingCount">8</span> <ruby>回<rt>かい</rt></ruby>
+      <div class="punchline-counter-wrap">
+        <button type="button" id="btnPunchDown" class="punch-arrow" aria-label="へらす">↓</button>
+        <div class="punchline-counter">
+          オチまであと <span id="remainingCount">8</span> <ruby>回<rt>かい</rt></ruby>
+        </div>
+        <button type="button" id="btnPunchUp" class="punch-arrow" aria-label="ふやす">↑</button>
       </div>
 
       <div class="action-row">
@@ -158,7 +114,7 @@
         <h2 class="review-heading">つかった<ruby>接続詞<rt>せつぞくし</rt></ruby></h2>
         <ol id="reviewConnectorList" class="review-connector-list"></ol>
 
-        <p class="review-tip">この<ruby>続<rt>つづ</rt></ruby>きの「オチ」を，<ruby>自分<rt>じぶん</rt></ruby>で<ruby>考<rt>かんが</rt></ruby>えてお<ruby>話<rt>はなし</rt></ruby>を<ruby>完成<rt>かんせい</rt></ruby>させよう！</p>
+        <p class="review-tip"><ruby>考<rt>かんが</rt></ruby>えたお<ruby>話<rt>はなし</rt></ruby>を<ruby>振<rt>ふ</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>って<ruby>楽<rt>たの</rt></ruby>しもう♪</p>
 
         <div class="action-row">
           <button id="reviewRestartBtn" class="btn btn-kirby-green btn-big">はじめから</button>

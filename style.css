@@ -465,7 +465,39 @@ rt {
 .play-window.spinning ruby rt { display: none; }
 .play-window.landed { animation: slot-pop 0.5s ease; }
 
-/* オチまでカウンター */
+/* オチまでカウンター（増減ボタン付き） */
+.punchline-counter-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.punch-arrow {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 4px solid var(--pink-deep);
+  background: var(--white);
+  color: var(--pink-deep);
+  font-size: 28px;
+  font-weight: 900;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--pink-deep);
+  transition: transform 0.06s, box-shadow 0.06s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+}
+.punch-arrow:hover { filter: brightness(0.97); }
+.punch-arrow:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--pink-deep);
+}
+
 .punchline-counter {
   font-size: 30px;
   font-weight: 900;

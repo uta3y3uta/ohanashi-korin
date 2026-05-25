@@ -107,86 +107,7 @@ function spinSlot(windowEl, pool, seenSet, lastText, btn, onLand, opts) {
 
 // ===== 初期化 =====
 function init() {
-  const hash = window.location.hash;
-  if (hash.startsWith('#play=')) {
-    enterPlayMode(hash.slice(6));
-  } else {
-    enterEditorMode();
-  }
-}
-
-// ===== 設定モード =====
-function enterEditorMode() {
-  document.getElementById('editorView').classList.remove('hidden');
-  document.getElementById('playView').classList.add('hidden');
-  bindEditorEvents();
-}
-
-function bindEditorEvents() {
-  const input = document.getElementById('punchlineCount');
-  const minus = document.getElementById('btnPunchMinus');
-  const plus  = document.getElementById('btnPunchPlus');
-
-  const clamp = (v) => Math.max(1, Math.min(30, v|0 || DEFAULT_PUNCHLINE));
-
-  minus.addEventListener('click', () => {
-    input.value = clamp(parseInt(input.value, 10) - 1);
-  });
-  plus.addEventListener('click', () => {
-    input.value = clamp(parseInt(input.value, 10) + 1);
-  });
-  input.addEventListener('change', () => {
-    input.value = clamp(parseInt(input.value, 10));
-  });
-
-  document.getElementById('btnPublish').addEventListener('click', publishUrl);
-  document.getElementById('btnCopy').addEventListener('click', () => {
-    const u = document.getElementById('publishedUrl');
-    if (!u.value) return;
-    u.select();
-    navigator.clipboard.writeText(u.value).then(() => {
-      const btn = document.getElementById('btnCopy');
-      const orig = btn.textContent;
-      btn.textContent = 'コピー済';
-      setTimeout(() => btn.textContent = orig, 1500);
-    });
-  });
-  document.getElementById('btnOpen').addEventListener('click', () => {
-    const url = document.getElementById('publishedUrl').value;
-    if (!url) return;
-    window.open(url, '_blank');
-  });
-}
-
-function publishUrl() {
-  const input = document.getElementById('punchlineCount');
-  let p = parseInt(input.value, 10);
-  if (!p || p < 1) p = DEFAULT_PUNCHLINE;
-  if (p > 30) p = 30;
-  input.value = p;
-
-  const payload = { p: p };
-  const json = JSON.stringify(payload);
-  const encoded = encodeURIComponent(json);
-  const baseUrl = window.location.href.split('#')[0];
-  const url = `${baseUrl}#play=${encoded}`;
-  document.getElementById('publishedUrl').value = url;
-}
-
-// ===== プレイモード =====
-function enterPlayMode(encoded) {
-  document.getElementById('editorView').classList.add('hidden');
-  document.getElementById('playView').classList.remove('hidden');
-
-  let p = DEFAULT_PUNCHLINE;
-  try {
-    const payload = JSON.parse(decodeURIComponent(encoded));
-    if (payload && typeof payload.p === 'number') {
-      p = Math.max(1, Math.min(30, payload.p|0));
-    }
-  } catch (e) { /* fallback */ }
-
-  punchlineCount = p;
+  punchlineCount = DEFAULT_PUNCHLINE;
   resetPlayState();
   bindPlayEvents();
   showPhase('setup');
@@ -195,6 +116,7 @@ function enterPlayMode(encoded) {
 function resetPlayState() {
   setupIdx = 0;
   setupResults = { when: '', where: '', who: '', what: '' };
+  punchlineCount = DEFAULT_PUNCHLINE;
   connectorRemaining = punchlineCount;
   connectorHistory = [];
   connectorLastText = '';
@@ -248,10 +170,31 @@ function bindPlayEvents() {
   document.getElementById('setupRerollBtn').addEventListener('click', onSetupReroll);
   document.getElementById('connectorNextBtn').addEventListener('click', onConnectorNext);
   document.getElementById('connectorRerollBtn').addEventListener('click', onConnectorReroll);
+  document.getElementById('btnPunchDown').addEventListener('click', () => adjustPunchline(-1));
+  document.getElementById('btnPunchUp').addEventListener('click', () => adjustPunchline(+1));
   document.getElementById('reviewRestartBtn').addEventListener('click', () => {
     resetPlayState();
     showPhase('setup');
   });
+}
+
+// オチまでの回数をいつでも増減
+function adjustPunchline(delta) {
+  const next = Math.max(1, Math.min(30, punchlineCount + delta));
+  if (next === punchlineCount) return;
+  punchlineCount = next;
+  connectorRemaining = Math.max(0, punchlineCount - connectorHistory.length);
+  document.getElementById('remainingCount').textContent = String(connectorRemaining);
+
+  const counter = document.querySelector('.punchline-counter');
+  const btn = document.getElementById('connectorNextBtn');
+  if (connectorRemaining <= 0) {
+    counter.classList.add('zero');
+    if (btn) btn.textContent = 'ふりかえる';
+  } else {
+    counter.classList.remove('zero');
+    if (btn) btn.textContent = '次へ';
+  }
 }
 
 // ===== フェーズ1：4つのサイコロを順番に回す =====
@@ -380,7 +323,4 @@ function enterReviewPhase() {
 }
 
 // ===== 起動 =====
-window.addEventListener('hashchange', () => {
-  init();
-});
 document.addEventListener('DOMContentLoaded', init);

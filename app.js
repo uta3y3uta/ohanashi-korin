@@ -31,13 +31,13 @@ const REVIEW_IDS = {
 
 // ----- 状態 -----
 let punchlineCount = DEFAULT_PUNCHLINE;
-let setupIdx = 0;                          // 0..3 で「いつ→どこで→だれが→なにをした」を進める
+let setupIdx = 0;
 let setupResults = { when: '', where: '', who: '', what: '' };
 let connectorRemaining = DEFAULT_PUNCHLINE;
 let connectorHistory = [];
 let connectorLastText = '';
 let connectorSeen = new Set();
-let phase = 'setup';                       // 'setup' | 'connector' | 'review'
+let phase = 'setup';
 
 // ===== ルビ記法 =====
 function escapeHtml(s) {
@@ -53,14 +53,13 @@ function renderRuby(text) {
   );
 }
 
-// ===== 共通：スロット表示 =====
 function setSlotHTML(el, text, opts) {
   opts = opts || {};
   const inner = opts.raw ? text : renderRuby(text);
   el.innerHTML = '<div class="slot-inner">' + inner + '</div>';
 }
 
-// シャッフルバッグ式：seenに無いものから選ぶ。全部出たら自動でリセット
+// シャッフルバッグ式スピン
 function spinSlot(windowEl, pool, seenSet, lastText, btn, onLand, opts) {
   opts = opts || {};
   if (!pool || pool.length === 0) {
@@ -79,6 +78,8 @@ function spinSlot(windowEl, pool, seenSet, lastText, btn, onLand, opts) {
   const picked = eligible[Math.floor(Math.random() * eligible.length)];
   seenSet.add(picked);
 
+  // 連打防止：両ボタンを止める
+  if (opts.disableBtns) opts.disableBtns.forEach(b => b && (b.disabled = true));
   if (btn) btn.disabled = true;
   windowEl.classList.add('spinning');
   windowEl.classList.remove('landed');
@@ -96,6 +97,7 @@ function spinSlot(windowEl, pool, seenSet, lastText, btn, onLand, opts) {
     windowEl.classList.remove('spinning');
     setSlotHTML(windowEl, picked);
     windowEl.classList.add('landed');
+    if (opts.disableBtns) opts.disableBtns.forEach(b => b && (b.disabled = false));
     if (btn) btn.disabled = false;
     if (onLand) onLand(picked);
   }, duration);
@@ -156,7 +158,6 @@ function bindEditorEvents() {
   });
 }
 
-// ===== URL発行 =====
 function publishUrl() {
   const input = document.getElementById('punchlineCount');
   let p = parseInt(input.value, 10);
@@ -183,7 +184,7 @@ function enterPlayMode(encoded) {
     if (payload && typeof payload.p === 'number') {
       p = Math.max(1, Math.min(30, payload.p|0));
     }
-  } catch (e) { /* fallback to default */ }
+  } catch (e) { /* fallback */ }
 
   punchlineCount = p;
   resetPlayState();
@@ -200,7 +201,6 @@ function resetPlayState() {
   connectorSeen = new Set();
   phase = 'setup';
 
-  // 表示リセット
   SETUP_ORDER.forEach(cat => {
     const slot = document.getElementById(SLOT_IDS[cat]);
     slot.classList.remove('landed', 'spinning');
@@ -209,21 +209,27 @@ function resetPlayState() {
     const cell = slot.closest('.setup-cell');
     cell.classList.remove('active', 'current', 'done');
   });
-  // 最初の「いつ」だけアクティブにする
   const firstCell = document.querySelector('.setup-cell[data-cat="' + SETUP_ORDER[0] + '"]');
   firstCell.classList.add('active', 'current');
 
-  // 接続詞スロット初期表示
   setSlotHTML(document.getElementById('connectorSlot'), '「{次|つぎ}へ」を{押|お}してね');
   document.getElementById('remainingCount').textContent = String(connectorRemaining);
   document.getElementById('connectorSlot').classList.remove('landed', 'spinning');
   document.querySelector('.punchline-counter').classList.remove('zero');
 
-  // ボタンラベルをリセット
-  document.getElementById('setupNextBtn').textContent = '次へ';
-  document.getElementById('setupNextBtn').disabled = false;
-  document.getElementById('connectorNextBtn').textContent = '次へ';
-  document.getElementById('connectorNextBtn').disabled = false;
+  // ボタン状態リセット
+  const setupNext = document.getElementById('setupNextBtn');
+  const setupReroll = document.getElementById('setupRerollBtn');
+  const connNext = document.getElementById('connectorNextBtn');
+  const connReroll = document.getElementById('connectorRerollBtn');
+  setupNext.textContent = '次へ';
+  setupNext.disabled = false;
+  setupReroll.classList.add('hidden');
+  setupReroll.disabled = false;
+  connNext.textContent = '次へ';
+  connNext.disabled = false;
+  connReroll.classList.add('hidden');
+  connReroll.disabled = false;
 }
 
 function showPhase(name) {
@@ -239,7 +245,9 @@ function bindPlayEvents() {
   _playEventsBound = true;
 
   document.getElementById('setupNextBtn').addEventListener('click', onSetupNext);
+  document.getElementById('setupRerollBtn').addEventListener('click', onSetupReroll);
   document.getElementById('connectorNextBtn').addEventListener('click', onConnectorNext);
+  document.getElementById('connectorRerollBtn').addEventListener('click', onConnectorReroll);
   document.getElementById('reviewRestartBtn').addEventListener('click', () => {
     resetPlayState();
     showPhase('setup');
@@ -249,10 +257,10 @@ function bindPlayEvents() {
 // ===== フェーズ1：4つのサイコロを順番に回す =====
 function onSetupNext() {
   const btn = document.getElementById('setupNextBtn');
+  const reroll = document.getElementById('setupRerollBtn');
   if (btn.disabled) return;
 
   if (setupIdx >= SETUP_ORDER.length) {
-    // 全部出揃った → 接続詞フェーズへ
     enterConnectorPhase();
     return;
   }
@@ -271,20 +279,39 @@ function onSetupNext() {
     setupIdx++;
 
     if (setupIdx < SETUP_ORDER.length) {
-      // 次のセルをアクティブに
       const nextCell = document.querySelector('.setup-cell[data-cat="' + SETUP_ORDER[setupIdx] + '"]');
       nextCell.classList.add('active', 'current');
       btn.textContent = '次へ';
     } else {
-      // 全部終わった
       btn.textContent = 'お話をつなげる！';
     }
-  });
+    // 「もう一度」を出す
+    reroll.classList.remove('hidden');
+  }, { disableBtns: [btn, reroll] });
+}
+
+// 直前に決まったセル（setupIdx-1）を再スピン
+function onSetupReroll() {
+  if (setupIdx === 0) return;
+  const reroll = document.getElementById('setupRerollBtn');
+  const btn = document.getElementById('setupNextBtn');
+  if (reroll.disabled) return;
+
+  const prevIdx = setupIdx - 1;
+  const cat = SETUP_ORDER[prevIdx];
+  const slot = document.getElementById(SLOT_IDS[cat]);
+  const pool = CATEGORY_DATA[cat]();
+  // 同じものが出ないように現在の値だけ除外
+  const seen = new Set();
+  if (setupResults[cat]) seen.add(setupResults[cat]);
+
+  spinSlot(slot, pool, seen, setupResults[cat], reroll, (picked) => {
+    setupResults[cat] = picked;
+  }, { disableBtns: [btn, reroll] });
 }
 
 // ===== フェーズ2：接続詞ループ =====
 function enterConnectorPhase() {
-  // recapを埋める
   SETUP_ORDER.forEach(cat => {
     document.getElementById(RECAP_IDS[cat]).innerHTML = renderRuby(setupResults[cat]);
   });
@@ -293,10 +320,10 @@ function enterConnectorPhase() {
 
 function onConnectorNext() {
   const btn = document.getElementById('connectorNextBtn');
+  const reroll = document.getElementById('connectorRerollBtn');
   if (btn.disabled) return;
 
   if (connectorRemaining <= 0) {
-    // オチに到達済み → ふりかえりへ
     enterReviewPhase();
     return;
   }
@@ -313,7 +340,28 @@ function onConnectorNext() {
       document.querySelector('.punchline-counter').classList.add('zero');
       btn.textContent = 'ふりかえる';
     }
-  });
+    // 「もう一度」を出す
+    reroll.classList.remove('hidden');
+  }, { disableBtns: [btn, reroll] });
+}
+
+// 直前に決まった接続詞を再スピン（カウンタは変えない）
+function onConnectorReroll() {
+  if (connectorHistory.length === 0) return;
+  const reroll = document.getElementById('connectorRerollBtn');
+  const btn = document.getElementById('connectorNextBtn');
+  if (reroll.disabled) return;
+
+  // 直前の履歴を取り除く（カウンタは触らない）
+  connectorHistory.pop();
+
+  const slot = document.getElementById('connectorSlot');
+  const pool = DATA_CONNECTOR;
+
+  connectorLastText = spinSlot(slot, pool, connectorSeen, connectorLastText, reroll, (picked) => {
+    connectorHistory.push(picked);
+    // カウンタは据え置き
+  }, { disableBtns: [btn, reroll] });
 }
 
 // ===== フェーズ3：ふりかえり =====

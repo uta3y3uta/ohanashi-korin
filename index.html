@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>おはなしコロリン</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Bungee&display=swap" rel="stylesheet">
+<script>
+  // ローカル開発時のキャッシュ事故防止：JS/CSS にタイムスタンプを差し込んで毎回リロード
+  (function () {
+    const t = Date.now();
+    document.write(
+      '<link rel="stylesheet" href="style.css?t=' + t + '">' +
+      '<script src="data.js?t=' + t + '"><\/script>' +
+      '<script src="data-where.js?t=' + t + '"><\/script>' +
+      '<script src="data-who.js?t=' + t + '"><\/script>' +
+      '<script src="data-what.js?t=' + t + '"><\/script>' +
+      '<script src="data-connector.js?t=' + t + '"><\/script>' +
+      '<script src="app.js?t=' + t + '"><\/script>'
+    );
+  })();
+</script>
+</head>
+<body>
+
+<!-- ===================== 設定モード ===================== -->
+<div id="editorView" class="view">
+  <header class="app-header">
+    <h1 class="app-title mario-title">
+      <span class="c1">お</span><span class="c2">は</span><span class="c3">な</span><span class="c4">し</span><span class="c1">コ</span><span class="c2">ロ</span><span class="c3">リ</span><span class="c4">ン</span>
+    </h1>
+    <p class="app-subtitle">即興でお話づくりを楽しもう！</p>
+  </header>
+
+  <div class="editor-single">
+    <section class="panel">
+      <h2>設定</h2>
+
+      <div class="setting-row">
+        <label class="setting-label" for="punchlineCount">オチまでのサイコロ回数</label>
+        <div class="setting-control">
+          <button type="button" class="btn btn-tiny" id="btnPunchMinus">−</button>
+          <input type="number" id="punchlineCount" min="1" max="30" value="8">
+          <button type="button" class="btn btn-tiny" id="btnPunchPlus">＋</button>
+          <span class="setting-unit">回</span>
+        </div>
+      </div>
+      <p class="setting-hint">接続詞のサイコロを何回ふったら「オチ」とするかを決めます（おすすめ：8回）。</p>
+
+      <div class="how-to">
+        <h3>あそびかた</h3>
+        <ol>
+          <li>「いつ」「どこで」「だれが」「なにをした」のサイコロを順番にふって，お話のはじまりを決めます。</li>
+          <li>「次へ」ボタンで接続詞のサイコロをふって，物語をつないでいきます。</li>
+          <li>「オチまであと〇回」がゼロになったら，自分でオチを考えてお話を完成させましょう。</li>
+        </ol>
+      </div>
+
+      <div class="publish-area">
+        <button id="btnPublish" class="btn btn-mario-green btn-big">URLをはっこう</button>
+        <div id="publishResult" class="publish-result">
+          <label>はっこうURL</label>
+          <div class="url-row">
+            <input id="publishedUrl" type="text" readonly placeholder="「URLをはっこう」を押すとここに出ます">
+            <button id="btnCopy" class="btn btn-mario-blue">コピー</button>
+            <button id="btnOpen" class="btn btn-mario-blue">ひらく</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ===================== 本番（プレイ）モード ===================== -->
+<div id="playView" class="view hidden">
+  <header class="play-header">
+    <h1 class="play-title mario-title">
+      <span class="c1">お</span><span class="c2">は</span><span class="c3">な</span><span class="c4">し</span><span class="c1">コ</span><span class="c2">ロ</span><span class="c3">リ</span><span class="c4">ン</span>
+    </h1>
+  </header>
+
+  <main class="play-main">
+
+    <!-- ===== フェーズ1：4つのサイコロでお話のはじまりを決める ===== -->
+    <section id="setupPhase" class="phase setup-phase">
+      <div class="setup-grid">
+        <div class="setup-cell" data-cat="when">
+          <div class="setup-label">いつ</div>
+          <div class="slot-frame setup-frame">
+            <div id="slotWhen" class="setup-slot"><div class="slot-inner">―</div></div>
+          </div>
+        </div>
+        <div class="setup-cell" data-cat="where">
+          <div class="setup-label">どこで</div>
+          <div class="slot-frame setup-frame">
+            <div id="slotWhere" class="setup-slot"><div class="slot-inner">―</div></div>
+          </div>
+        </div>
+        <div class="setup-cell" data-cat="who">
+          <div class="setup-label">だれが</div>
+          <div class="slot-frame setup-frame">
+            <div id="slotWho" class="setup-slot"><div class="slot-inner">―</div></div>
+          </div>
+        </div>
+        <div class="setup-cell" data-cat="what">
+          <div class="setup-label">なにをした</div>
+          <div class="slot-frame setup-frame">
+            <div id="slotWhat" class="setup-slot"><div class="slot-inner">―</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="setupNextBtn" class="btn btn-mario-red btn-mega">次へ</button>
+      </div>
+    </section>
+
+    <!-- ===== フェーズ2：接続詞ループ（メイン機能） ===== -->
+    <section id="connectorPhase" class="phase connector-phase hidden">
+
+      <!-- 上部にお話のはじまり要約（小さく） -->
+      <div class="story-recap">
+        <div class="recap-item"><span class="recap-tag">いつ</span><span id="recapWhen" class="recap-text">―</span></div>
+        <div class="recap-item"><span class="recap-tag">どこで</span><span id="recapWhere" class="recap-text">―</span></div>
+        <div class="recap-item"><span class="recap-tag">だれが</span><span id="recapWho" class="recap-text">―</span></div>
+        <div class="recap-item"><span class="recap-tag">なにをした</span><span id="recapWhat" class="recap-text">―</span></div>
+      </div>
+
+      <!-- メインの巨大スロット -->
+      <div class="slot-frame play-frame">
+        <div id="connectorSlot" class="play-window"><div class="slot-inner">「次へ」を{押|お}してね</div></div>
+      </div>
+
+      <!-- 残り回数 -->
+      <div class="punchline-counter">
+        オチまであと <span id="remainingCount">8</span> 回
+      </div>
+
+      <!-- 次へボタン -->
+      <div class="action-row">
+        <button id="connectorNextBtn" class="btn btn-mario-red btn-mega">次へ</button>
+      </div>
+    </section>
+
+    <!-- ===== フェーズ3：ふりかえり ===== -->
+    <section id="reviewPhase" class="phase review-phase hidden">
+      <div class="review-card">
+        <h2 class="review-heading">お話のはじまり</h2>
+        <div class="review-story">
+          <div class="review-line"><span class="review-tag">いつ</span><span id="reviewWhen" class="review-text">―</span></div>
+          <div class="review-line"><span class="review-tag">どこで</span><span id="reviewWhere" class="review-text">―</span></div>
+          <div class="review-line"><span class="review-tag">だれが</span><span id="reviewWho" class="review-text">―</span></div>
+          <div class="review-line"><span class="review-tag">なにをした</span><span id="reviewWhat" class="review-text">―</span></div>
+        </div>
+
+        <h2 class="review-heading">つかった接続詞</h2>
+        <ol id="reviewConnectorList" class="review-connector-list"></ol>
+
+        <p class="review-tip">この続きの「オチ」を，自分で考えてお話を完成させよう！</p>
+
+        <div class="action-row">
+          <button id="reviewRestartBtn" class="btn btn-mario-green btn-big">もういちど</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

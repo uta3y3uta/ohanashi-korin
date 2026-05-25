@@ -1,0 +1,568 @@
+/* ===== カラーパレット（スーパーマリオワールド風） ===== */
+:root {
+  --yellow: #FFE600;
+  --yellow-dark: #E5CE00;
+  --black: #1A1A1A;
+  --red: #E52521;
+  --red-dark: #B41611;
+  --blue: #1F8FFF;
+  --blue-dark: #1370CC;
+  --green: #43B047;
+  --green-dark: #2E8530;
+  --orange: #F89B2A;
+  --pink: #FF7AB6;
+  --white: #FFFFFF;
+  --cream: #FFF8DC;
+  --gray: #555;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--yellow);
+  color: var(--black);
+  font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Yu Gothic UI", "Meiryo", sans-serif;
+  font-weight: 800;
+  -webkit-text-size-adjust: 100%;
+}
+
+rt {
+  font-size: 0.5em;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.view { min-height: 100vh; }
+.hidden { display: none !important; }
+
+/* ===== マリオ風タイトル（多色＋黒フチ） ===== */
+.mario-title {
+  margin: 0;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-weight: 900;
+  font-size: 42px;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-shadow:
+    -2px -2px 0 var(--black),
+     2px -2px 0 var(--black),
+    -2px  2px 0 var(--black),
+     2px  2px 0 var(--black),
+     0   -2px 0 var(--black),
+     0    2px 0 var(--black),
+    -2px  0   0 var(--black),
+     2px  0   0 var(--black),
+     4px  4px 0 rgba(0,0,0,0.25);
+}
+.mario-title .c1 { color: #E52521; }
+.mario-title .c2 { color: #1F8FFF; }
+.mario-title .c3 { color: #FFD93D; }
+.mario-title .c4 { color: #43B047; }
+
+/* ===== ヘッダー ===== */
+.app-header, .play-header {
+  text-align: center;
+  padding: 22px 16px 12px;
+}
+.app-subtitle {
+  margin: 12px 0 0;
+  font-size: 15px;
+  color: var(--black);
+  background: var(--white);
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 999px;
+  border: 3px solid var(--black);
+  font-weight: 800;
+}
+
+/* ===== 設定画面 ===== */
+.editor-single {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 8px 20px 40px;
+}
+.panel {
+  background: var(--white);
+  border: 4px solid var(--black);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 6px 6px 0 var(--black);
+}
+.panel h2 {
+  margin: 0 0 14px;
+  font-size: 22px;
+  color: var(--black);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.setting-label {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--black);
+}
+.setting-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.setting-control input[type=number] {
+  width: 80px;
+  padding: 8px 10px;
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  background: var(--cream);
+  font-family: inherit;
+}
+.setting-control input[type=number]::-webkit-outer-spin-button,
+.setting-control input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.setting-control input[type=number] {
+  -moz-appearance: textfield;
+}
+.setting-unit {
+  font-size: 16px;
+  font-weight: 900;
+}
+.setting-hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--gray);
+  font-weight: 700;
+}
+
+.how-to {
+  margin-top: 22px;
+  padding: 14px 18px;
+  background: var(--cream);
+  border: 3px dashed var(--black);
+  border-radius: 14px;
+}
+.how-to h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+.how-to ol {
+  margin: 0;
+  padding-left: 22px;
+  font-size: 14px;
+  line-height: 1.7;
+  font-weight: 700;
+}
+.how-to li { margin-bottom: 4px; }
+
+/* ===== ボタン（マリオ風コミックボタン） ===== */
+.btn {
+  border: 3px solid var(--black);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 3px 3px 0 var(--black);
+  transition: transform 0.05s, box-shadow 0.05s;
+}
+.btn:hover { filter: brightness(0.97); }
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--black);
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-mario-red    { background: var(--red);   color: var(--white); }
+.btn-mario-blue   { background: var(--blue);  color: var(--white); }
+.btn-mario-green  { background: var(--green); color: var(--white); }
+.btn-mario-yellow { background: var(--yellow); color: var(--black); }
+
+.btn-tiny {
+  padding: 4px 14px; font-size: 16px;
+  box-shadow: 2px 2px 0 var(--black); border-width: 2px;
+  font-weight: 900;
+}
+.btn-small  { padding: 8px 18px; font-size: 14px; }
+.btn-big    { padding: 12px 32px; font-size: 18px; }
+.btn-mega {
+  padding: 18px 56px;
+  font-size: 26px;
+  border-width: 4px;
+  box-shadow: 5px 5px 0 var(--black);
+}
+.btn-mega:active { box-shadow: 2px 2px 0 var(--black); }
+
+/* ===== URL発行エリア ===== */
+.publish-area {
+  margin-top: 22px;
+  border-top: 3px dashed var(--black);
+  padding-top: 18px;
+  text-align: center;
+}
+.publish-result { margin-top: 12px; text-align: left; display: block !important; }
+.publish-result label { font-size: 12px; color: var(--gray); display: block; }
+.url-row { display: flex !important; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+.url-row input {
+  flex: 1; min-width: 200px;
+  padding: 8px 10px; font-size: 12px;
+  border: 2px solid var(--black); border-radius: 8px;
+  background: var(--white); font-family: monospace;
+}
+
+/* ===================== プレイモード ===================== */
+.play-main {
+  display: flex; flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 20px 36px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.phase { width: 100%; }
+
+/* ===== フェーズ1：4つのサイコロ ===== */
+.setup-phase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 980px;
+}
+.setup-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.setup-cell.active,
+.setup-cell.done { opacity: 1; }
+.setup-cell.current { transform: scale(1.02); }
+
+.setup-label {
+  font-size: 18px;
+  font-weight: 900;
+  text-align: center;
+  background: var(--white);
+  border: 3px solid var(--black);
+  border-radius: 999px;
+  padding: 4px 14px;
+  align-self: center;
+  box-shadow: 2px 2px 0 var(--black);
+}
+.setup-cell[data-cat="when"]  .setup-label { background: #FFD93D; }
+.setup-cell[data-cat="where"] .setup-label { background: #43B047; color: var(--white); }
+.setup-cell[data-cat="who"]   .setup-label { background: #1F8FFF; color: var(--white); }
+.setup-cell[data-cat="what"]  .setup-label { background: #E52521; color: var(--white); }
+
+.slot-frame {
+  border: 4px solid var(--black);
+  border-radius: 16px;
+  background: var(--white);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 4px 4px 0 var(--black);
+}
+.setup-frame { width: 100%; }
+
+.setup-slot {
+  min-height: 110px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 14px 18px;
+}
+.setup-slot .slot-inner {
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  line-height: 2.1;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  color: var(--black);
+}
+.setup-slot.empty .slot-inner { color: #ccc; font-size: 30px; }
+
+/* スピン中 */
+.setup-slot.spinning .slot-inner {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  animation: slot-flash 0.08s linear infinite;
+  filter: blur(0.5px);
+  font-size: 16px;
+  line-height: 1.4;
+}
+.setup-slot.spinning ruby rt { display: none; }
+.setup-slot.spinning ruby    { ruby-position: under; }
+.setup-slot.landed { animation: slot-pop 0.5s ease; }
+
+@keyframes slot-flash {
+  0%   { opacity: 0.55; }
+  100% { opacity: 1; }
+}
+@keyframes slot-pop {
+  0%   { transform: scale(0.85); }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* ネイティブのruby表示 */
+.setup-slot ruby, .play-window ruby { ruby-position: over; }
+.setup-slot rt {
+  font-size: 0.45em;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--black);
+}
+
+/* ===== フェーズ2：接続詞ループ ===== */
+.connector-phase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* お話のはじまり要約（小さく） */
+.story-recap {
+  width: 100%;
+  max-width: 980px;
+  background: var(--white);
+  border: 3px solid var(--black);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 14px;
+  box-shadow: 3px 3px 0 var(--black);
+}
+.recap-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.recap-tag {
+  display: inline-block;
+  background: var(--black);
+  color: var(--white);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 900;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.recap-text {
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.recap-text ruby { ruby-position: over; }
+.recap-text rt {
+  font-size: 0.55em;
+  font-weight: 700;
+  color: var(--gray);
+}
+
+/* メインの接続詞スロット */
+.play-frame {
+  width: 100%;
+  max-width: 980px;
+  border-width: 6px;
+  border-radius: 22px;
+  box-shadow: 8px 8px 0 var(--black);
+  background: var(--white);
+}
+.play-window {
+  min-height: 280px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 28px 32px;
+}
+.play-window .slot-inner {
+  width: 100%;
+  text-align: center;
+  font-size: 56px;
+  line-height: 1.6;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  color: var(--black);
+}
+.play-window rt {
+  font-size: 0.35em;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--black);
+}
+.play-window.spinning .slot-inner {
+  white-space: nowrap; overflow: hidden;
+  animation: slot-flash 0.08s linear infinite;
+  filter: blur(0.6px);
+  font-size: 40px;
+  line-height: 1.4;
+}
+.play-window.spinning ruby rt { display: none; }
+.play-window.landed { animation: slot-pop 0.5s ease; }
+
+/* オチまでカウンター */
+.punchline-counter {
+  font-size: 28px;
+  font-weight: 900;
+  background: var(--white);
+  border: 4px solid var(--black);
+  border-radius: 999px;
+  padding: 8px 28px;
+  box-shadow: 4px 4px 0 var(--black);
+  text-align: center;
+}
+.punchline-counter #remainingCount {
+  display: inline-block;
+  min-width: 1.5em;
+  color: var(--red);
+  font-size: 36px;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+}
+.punchline-counter.zero {
+  background: var(--red);
+  color: var(--white);
+  animation: pulse 0.6s ease-in-out infinite alternate;
+}
+.punchline-counter.zero #remainingCount { color: var(--yellow); }
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.05); }
+}
+
+/* ===== アクションボタン行 ===== */
+.action-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* ===== フェーズ3：ふりかえり ===== */
+.review-phase {
+  display: flex;
+  justify-content: center;
+}
+.review-card {
+  background: var(--white);
+  border: 5px solid var(--black);
+  border-radius: 22px;
+  padding: 24px 28px;
+  box-shadow: 8px 8px 0 var(--black);
+  max-width: 880px;
+  width: 100%;
+}
+.review-heading {
+  margin: 18px 0 10px;
+  font-size: 22px;
+  background: var(--yellow);
+  display: inline-block;
+  padding: 4px 16px;
+  border: 3px solid var(--black);
+  border-radius: 999px;
+}
+.review-heading:first-child { margin-top: 0; }
+
+.review-story {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.review-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 18px;
+  padding: 6px 10px;
+  background: var(--cream);
+  border-radius: 10px;
+  border: 2px solid var(--black);
+}
+.review-tag {
+  display: inline-block;
+  background: var(--black);
+  color: var(--white);
+  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.review-text {
+  font-weight: 900;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.review-text ruby { ruby-position: over; }
+.review-text rt   { font-size: 0.5em; font-weight: 700; color: var(--gray); }
+
+.review-connector-list {
+  margin: 0;
+  padding-left: 28px;
+  font-size: 16px;
+  line-height: 2.0;
+  font-weight: 800;
+}
+.review-connector-list li {
+  margin-bottom: 2px;
+  padding: 2px 8px;
+  border-bottom: 1px dashed #cfcfcf;
+}
+.review-connector-list ruby { ruby-position: over; }
+.review-connector-list rt   { font-size: 0.5em; font-weight: 700; color: var(--gray); }
+
+.review-tip {
+  margin: 18px 0 16px;
+  padding: 10px 14px;
+  background: var(--yellow);
+  border: 3px dashed var(--black);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* ===== レスポンシブ ===== */
+@media (max-width: 760px) {
+  .mario-title { font-size: 30px; }
+  .setup-grid { grid-template-columns: 1fr; }
+  .play-window .slot-inner { font-size: 40px; line-height: 1.5; }
+  .play-window.spinning .slot-inner { font-size: 28px; }
+  .play-window { min-height: 200px; padding: 22px 18px; }
+  .punchline-counter { font-size: 22px; padding: 6px 22px; }
+  .punchline-counter #remainingCount { font-size: 30px; }
+  .btn-mega { padding: 14px 36px; font-size: 22px; }
+  .story-recap { grid-template-columns: 1fr; }
+}
